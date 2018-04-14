@@ -1,7 +1,7 @@
 package common
 
 import org.scalatestplus.play.PlaySpec
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.Json
 
 /**
   * DataSpec
@@ -49,6 +49,31 @@ class DataSpec extends PlaySpec {
 
       val r2 = Json.toJson(RestResult.fail("err")).toString()
       r2 must be ("""{"isError":true,"payload":"","error":{"code":0,"msg":"err"}}""")
+    }
+  }
+
+  "PageResult" must {
+    "it's property should calculate correctly" in {
+      val p = PageResult(List("H", "e", "l", "l", "o"), 1, 34)
+      p.list.size must be (5)
+      p.pageSize must be (20)
+      p.page must be (1)
+      p.total must be (34)
+      p.totalPage must be (2)
+    }
+
+    "default pageSize can be change by implicit value" in {
+      implicit val pageSize: Int = 10
+      val p = PageResult(List("H", "e", "l", "l", "o"), 1, 34)
+      p.pageSize must be (10)
+      p.totalPage must be (4)
+    }
+
+    "support play json serialize" in {
+      implicit val pageSize: Int = 10
+      val p = PageResult(List("Hello"), 1, 34)
+      val s = Json.toJson(p).toString()
+      s must be ("""{"list":["Hello"],"page":1,"total":34,"pageSize":10,"totalPage":4}""")
     }
   }
 }

@@ -8,6 +8,7 @@ object Error {
   implicit val errorWrites: OWrites[Error] = Json.writes[Error]
 }
 
+
 sealed trait RestResult[+T] {
   def isError: Boolean
   def payload: Option[T]
@@ -43,4 +44,38 @@ object RestResult {
       Json.obj("isError" -> r.isError) +
       ("payload" -> r.payload.map(x => fmt.writes(x)).getOrElse(JsString(""))) +
       ("error" -> r.error.map(Json.toJson(_)).getOrElse(JsObject.empty))
+}
+
+
+/**
+  * Page result
+  * @param list list data
+  * @param page page number
+  * @param total total records
+  * @param pageSize size of each page
+  * @tparam T
+  */
+final class PageResult[+T](val list: Seq[T], val page: Int = 1, val total: Int = 0, implicit val pageSize: Int = 20) {
+
+  /**
+    * total page
+    * @return
+    */
+  def totalPage: Int = Math.ceil(total.toDouble / pageSize).toInt
+}
+
+object PageResult {
+
+  def apply[T](list: Seq[T], page: Int, total: Int)(implicit pageSize: Int = 20) =
+    new PageResult(list, page, total, pageSize)
+
+  implicit def pageResultWrites[T](implicit fmt: Writes[T]): Writes[PageResult[T]] =
+    (r: PageResult[T]) =>
+      Json.obj("list" -> JsArray(r.list.map(fmt.writes))) ++
+        Json.obj(
+          "page" -> r.page,
+          "total" -> r.total,
+          "pageSize" -> r.pageSize,
+          "totalPage" -> r.totalPage
+        )
 }
