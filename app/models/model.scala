@@ -1,12 +1,15 @@
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat, OWrites}
 
 
 case class Address(number: Int, street: String)
 case class Person(name: String, address: Address)
 
-object Implics {
-  implicit val addressWriter = Json.writes[Address]
-  implicit val personWriter = Json.writes[Person]
+object Address {
+  implicit val addressFormat: OFormat[Address] = Json.format[Address]
+}
+
+object Person {
+  implicit val personFormat: OFormat[Person] = Json.format[Person]
 }
