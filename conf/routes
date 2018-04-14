@@ -3,4 +3,5 @@
 
 
 GET  /json/demo1          controllers.JsonController.demo1
+GET  /users               controllers.UserController.userList
 GET  /assets/*file        controllers.Assets.at(path="/public", file)
