@@ -10,12 +10,15 @@ lazy val `play-demo1` = (project in file(".")).enablePlugins(PlayScala)
 
 libraryDependencies ++= Seq(
   guice,
-  jdbc,
-  evolutions,
+
+//  jdbc,
+//  evolutions,
+
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test",
   "org.webjars" % "bootstrap" % "4.0.0-2",
 
   "com.typesafe.play" %% "play-slick" % "3.0.3",
+  "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3",
   "com.h2database" % "h2" % "1.4.196",
 
   "com.typesafe.slick" %% "slick" % slickVersion,
