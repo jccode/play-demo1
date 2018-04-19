@@ -27,30 +27,20 @@ libraryDependencies ++= Seq(
 )
 
 
-
-// custom keys
-val slick = taskKey[Seq[File]]("slick generate source from tables.")
-
-// helper functions
-def slickOutputFile = (basedir:String, pkg:String) => s"${basedir}/${pkg.replace(".","/")}/Tables.scala"
-def slickMySQL (url: String, user: String, password: String, pkg: String, srcdir: String) = {
-  val profile = "slick.jdbc.MySQLProfile"
-  val jdbcDriver = "com.mysql.jdbc.Driver"
-  (Array(profile, jdbcDriver, url, srcdir, pkg, user, password), slickOutputFile(srcdir, pkg))
-}
-def slickH2 (url: String, user: String, password: String, pkg: String, srcdir: String) = {
-  val profile = "slick.jdbc.H2Profile"
-  val jdbcDriver = "org.h2.Driver"
-  (Array(profile, jdbcDriver, url, srcdir, pkg, user, password), slickOutputFile(srcdir, pkg))
-}
-
+lazy val slick = taskKey[Seq[File]]("gen-tables")  // register manual sbt command
 slick := {
-  val dir = (scalaSource in Compile).value
-  val cp = (dependencyClasspath in Compile).value
-  val r = (runner in Compile).value
-  val s = streams.value
-  val outputDir = dir.getPath
-  val t = slickH2("jdbc:h2:tcp://localhost:9092/~/play-remote", "sa", "", "gen", outputDir)
-  r.run("slick.codegen.SourceCodeGenerator", cp.files, t._1, s.log).failed foreach (sys error _.getMessage)
-  Seq(file(t._2))
+  val (dir, cp, r, s) = ((sourceManaged in Compile).value, (dependencyClasspath in Compile).value, (runner in Compile).value, streams.value)
+
+  val pkg = "dao"
+  val slickProfile = "slick.jdbc.H2Profile"
+  val jdbcDriver = "org.h2.Driver"
+  val url = "jdbc:h2:./play.db;MODE=MYSQL;"
+  val user = "sa"
+  val password = ""
+
+  r.run("slick.codegen.SourceCodeGenerator", cp.files, Array(slickProfile, jdbcDriver, url, dir.getPath, pkg, user, password), s.log)
+  val outputFile = dir / pkg.replace(".", "/") / "Tables.scala"
+  Seq(outputFile)
 }
+
+//sourceGenerators in Compile += slick  // register automatic code generation on every compile, remove for only manual use

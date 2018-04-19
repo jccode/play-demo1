@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext
 class UserController @Inject() (cc: ControllerComponents, repo: UserRepo)(implicit ec: ExecutionContext) extends AbstractController(cc) {
 
   def userList() = Action.async {
-    repo.list.map { users =>
+    repo.all.map { users =>
       Ok(Json.toJson(users))
     }
   }
