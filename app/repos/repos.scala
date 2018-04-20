@@ -30,5 +30,5 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
     models.User(userRow.id, userRow.name, userRow.password, userRow.salt, userRow.mobile, userRow.createTime, userRow.updateTime)
   }
 
-
+  override def close: Future[Unit] = Future.successful(db.close())
 }

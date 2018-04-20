@@ -34,7 +34,7 @@ slick := {
   val pkg = "dao"
   val slickProfile = "slick.jdbc.H2Profile"
   val jdbcDriver = "org.h2.Driver"
-  val url = "jdbc:h2:./play.db;MODE=MYSQL;"
+  val url = "jdbc:h2:./play"
   val user = "sa"
   val password = ""
 
