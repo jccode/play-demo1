@@ -20,3 +20,4 @@ object User {
   implicit val userFormat: OFormat[User] = Json.format[User]
 }
 
+case class UserQuery(name: Option[String], mobile: Option[String])

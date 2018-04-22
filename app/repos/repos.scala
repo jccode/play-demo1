@@ -2,6 +2,7 @@ package repos
 
 import dao._
 import javax.inject.{Inject, Singleton}
+import models.UserQuery
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
@@ -31,4 +32,18 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
   }
 
   override def close: Future[Unit] = Future.successful(db.close())
+
+  override def get(id: Int): Future[Option[models.User]] = {
+    val f = db.run(User.filter(_.id === id).result)
+    f.map(_.map(userRowToUser).headOption)
+  }
+
+  override def query(query: UserQuery): Future[Seq[models.User]] = {
+    val f = db.run(User.filter(t => {
+      query.name.fold(true.bind)(t.name === _)
+//      &&
+//      query.mobile.fold(true.bind){mobile => t.mobile.isDefined && (t.mobile === Some(mobile))}
+    }).result)
+    f.map(_.map(userRowToUser))
+  }
 }

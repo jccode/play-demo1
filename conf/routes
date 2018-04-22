@@ -3,5 +3,12 @@
 
 
 GET  /json/demo1          controllers.JsonController.demo1
+
 GET  /users               controllers.UserController.userList
+GET  /users/q             controllers.UserController.query(name: Option[String], mobile: Option[String])
+GET  /users/:id           controllers.UserController.get(id: Int)
+
+# query? create? update? delete
+POST /users               controllers.UserController.create
+
 GET  /assets/*file        controllers.Assets.at(path="/public", file)
