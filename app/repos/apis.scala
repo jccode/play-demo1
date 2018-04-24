@@ -14,5 +14,7 @@ trait UserRepo {
 
   def get(id: Int): Future[Option[models.User]]
 
+  def insert(user: User): Future[Int]
+
   def close: Future[Unit]
 }

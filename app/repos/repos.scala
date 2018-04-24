@@ -29,7 +29,7 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
   }
 
   private def userRowToUser(userRow: UserRow): models.User = {
-    models.User(userRow.id, userRow.name, userRow.password, userRow.salt, userRow.mobile, userRow.createTime, userRow.updateTime)
+    models.User(userRow.name, userRow.password, userRow.salt, userRow.mobile, userRow.id, userRow.createTime, userRow.updateTime)
   }
 
   override def close: Future[Unit] = Future.successful(db.close())
@@ -45,5 +45,9 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
         .filterOpt(query.mobile)(_.mobile === _)
         .result)
     f.map(_.map(userRowToUser))
+  }
+
+  override def insert(user: models.User): Future[Int] = {
+    db.run(User returning User.map(_.id) += userToUserRow(user))
   }
 }

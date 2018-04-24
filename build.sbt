@@ -24,6 +24,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % slickVersion,
   "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
   "com.typesafe.slick" %% "slick-codegen" % slickVersion,
+
+  "com.chuusai" %% "shapeless" % "2.3.3"
 )
 
 

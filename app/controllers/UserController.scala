@@ -1,8 +1,8 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import models.UserQuery
-import play.api.libs.json.Json
+import models.{User, UserCreateForm, UserQuery}
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
 import repos.UserRepo
 
@@ -34,7 +34,14 @@ class UserController @Inject() (cc: ControllerComponents, repo: UserRepo)(implic
     }
   }
 
-  def create() = Action.async {
-    Future { Ok("Hello") }
+  def create() = Action.async(parse.json) { request =>
+    val body: JsValue = request.body
+    val userOpt = Json.fromJson[UserCreateForm](body).asOpt
+//    userOpt.map { userForm =>
+//      val user = (User.apply _).tupled(UserCreateForm.unapply(userForm).get)
+//      repo.insert().map {ret => Ok(ret.toString)}
+//    }.getOrElse(Future { BadRequest("Invalid arguments") })
+
+    Future { Ok("ok") }
   }
 }
