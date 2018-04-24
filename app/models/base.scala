@@ -5,6 +5,17 @@ import java.text.SimpleDateFormat
 
 import play.api.libs.json.{Format, JsString, JsSuccess, JsValue}
 
+
+/**
+  * Base model
+  */
+trait BaseModel {
+  def id: Int
+  def createTime: java.sql.Timestamp
+  def updateTime: java.sql.Timestamp
+}
+
+
 /**
   * Implics
   *

@@ -1,13 +1,29 @@
 package repos
 
-import dao._
-import common.Slick._
+import com.google.inject.ImplementedBy
+import dao.Tables
 import javax.inject.{Inject, Singleton}
-import models.UserQuery
+import models.{User, UserQuery}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
+import common.Slick._
 
 import scala.concurrent.{ExecutionContext, Future}
+
+
+@ImplementedBy(classOf[SlickUserRepo])
+trait UserRepo {
+
+  def all: Future[Seq[User]]
+
+  def query(userQuery: UserQuery): Future[Seq[User]]
+
+  def get(id: Int): Future[Option[models.User]]
+
+  def insert(user: User): Future[Int]
+
+  def close: Future[Unit]
+}
 
 
 @Singleton
@@ -41,9 +57,9 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
 
   override def query(query: UserQuery): Future[Seq[models.User]] = {
     val f = db.run(User
-        .filterOpt(query.name)(_.name === _)
-        .filterOpt(query.mobile)(_.mobile === _)
-        .result)
+      .filterOpt(query.name)(_.name === _)
+      .filterOpt(query.mobile)(_.mobile === _)
+      .result)
     f.map(_.map(userRowToUser))
   }
 
