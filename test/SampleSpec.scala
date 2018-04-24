@@ -21,4 +21,13 @@ class SampleSpec extends PlaySpec {
     }
   }
 
+  "shapeless spec" must {
+    "tupled syntax" in {
+      import shapeless.syntax.std.tuple._
+      val t1 = ("tom", 12)
+      val t2 = t1 :+ 1d :+ "cat"
+      t2 must be (("tom", 12, 1d, "cat"))
+    }
+  }
+
 }
