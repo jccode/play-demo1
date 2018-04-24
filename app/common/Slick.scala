@@ -26,6 +26,12 @@ object Slick {
     * lazy val User = new TableQuery(tag => new User(tag))
     * </code>
     *
+    * Usage code as below:
+    *
+    * <code>
+    *   case class UserQuery(name: Option[String], mobile: Option[String])
+    *   val query = UserQuery(Some("some_name"), Some("some_number"))
+    * </code>
     *
     * @param q
     * @tparam M
