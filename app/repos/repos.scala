@@ -40,9 +40,8 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
 
   override def query(query: UserQuery): Future[Seq[models.User]] = {
     val f = db.run(User.filter(t => {
-      query.name.fold(true.bind)(t.name === _)
-//      &&
-//      query.mobile.fold(true.bind){mobile => t.mobile.isDefined && (t.mobile === Some(mobile))}
+      query.name.fold(true.bind)(t.name === _) &&
+        (if(query.mobile.isDefined) t.mobile === query.mobile else LiteralColumn(Option(true)))
     }).result)
     f.map(_.map(userRowToUser))
   }
