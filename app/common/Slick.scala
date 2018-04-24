@@ -7,7 +7,8 @@ object Slick {
   /**
     * Conditional Query Filter
     *
-    * Supposed following definition
+    * Supposed following definition,
+    *
     * <code>
     * case class UserRow(id: Int, name: String, mobile: Option[String])
     *
@@ -26,17 +27,40 @@ object Slick {
     * lazy val User = new TableQuery(tag => new User(tag))
     * </code>
     *
-    * Usage code as below:
+    * Query object as follow,
     *
     * <code>
     *   case class UserQuery(name: Option[String], mobile: Option[String])
     *   val query = UserQuery(Some("some_name"), Some("some_number"))
     * </code>
     *
-    * @param q
-    * @tparam M
-    * @tparam U
-    * @tparam C
+    * Without <code>ConditionQueryFilter</code>, you maybe write filter code as,
+    *
+    * <code>
+    *  db.run(User.filter(t => {
+    *    query.name.fold(true.bind)(t.name === _) &&
+    *    (if(query.mobile.isDefined) t.mobile === query.mobile else LiteralColumn(Option(true)))
+    *  }).result)
+    * </code>
+    *
+    * With <code>ConditionQueryFilter</code>, you can make this more elegant,
+    *
+    * <code>
+    *  db.run(User
+    *    .filterIf(query.name.isDefined)(_.name === query.name.get)
+    *    .filterIf(query.mobile.isDefined)(_.mobile === query.mobile)
+    *    .result)
+    * </code>
+    *
+    * or,
+    *
+    * <code>
+    *  db.run(User
+    *      .filterOpt(query.name)(_.name === _)
+    *      .filterOpt(query.mobile)(_.mobile === _)
+    *      .result)
+    * </code>
+    *
     */
   implicit class ConditionalQueryFilter[M, U, C[_]](q: Query[M, U, C]) {
 
