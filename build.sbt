@@ -8,6 +8,8 @@ val slickVersion = "3.2.1"
 
 lazy val `play-demo1` = (project in file(".")).enablePlugins(PlayScala)
 
+scalacOptions += "-Ypartial-unification"
+
 libraryDependencies ++= Seq(
   guice,
 
@@ -25,7 +27,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick-hikaricp" % slickVersion,
   "com.typesafe.slick" %% "slick-codegen" % slickVersion,
 
-  "com.chuusai" %% "shapeless" % "2.3.3"
+  "com.chuusai" %% "shapeless" % "2.3.3",
+  "org.typelevel" %% "cats-core" % "1.1.0"
 )
 
 
