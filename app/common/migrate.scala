@@ -13,13 +13,14 @@ object migrate {
     def migrateTo[B](implicit migration: Migration[A, B]): B = migration.apply(a)
   }
 
-  implicit def genericMigration[A, B](implicit aGen: Generic[A],
-                                      bGen: Generic[B]
-                                     ): Migration[A, B] =
-    new Migration[A, B] {
-      override def apply(a: A): B = ???
-    }
-
+  implicit def genericMigration[A, B, ARepr <: HList, BRepr <: HList, Unaligned <: HList]
+  (implicit
+   aGen: LabelledGeneric.Aux[A, ARepr],
+   bGen: LabelledGeneric.Aux[B, BRepr],
+   inter: hlist.Intersection.Aux[ARepr, BRepr, Unaligned],
+   align: hlist.Align[Unaligned, BRepr]
+  ): Migration[A, B] =
+    (a: A) => bGen.from(align.apply(inter.apply(aGen.to(a))))
 }
 
 
