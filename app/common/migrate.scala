@@ -1,5 +1,6 @@
 package common
 
+import cats.Monoid
 import shapeless._
 import shapeless.ops.hlist
 
@@ -13,14 +14,17 @@ object migrate {
     def migrateTo[B](implicit migration: Migration[A, B]): B = migration.apply(a)
   }
 
-  implicit def genericMigration[A, B, ARepr <: HList, BRepr <: HList, Unaligned <: HList]
+  implicit def genericMigration[A, B, ARepr <: HList, BRepr <: HList, Common <: HList, Added <: HList, Unaligned <: HList]
   (implicit
    aGen: LabelledGeneric.Aux[A, ARepr],
    bGen: LabelledGeneric.Aux[B, BRepr],
-   inter: hlist.Intersection.Aux[ARepr, BRepr, Unaligned],
+   inter: hlist.Intersection.Aux[ARepr, BRepr, Common],
+   diff: hlist.Diff.Aux[BRepr, Common, Added],
+   monoid: Monoid[Added],
+   prepend: hlist.Prepend.Aux[Added, Common, Unaligned],
    align: hlist.Align[Unaligned, BRepr]
   ): Migration[A, B] =
-    (a: A) => bGen.from(align.apply(inter.apply(aGen.to(a))))
+    (a: A) => bGen.from(align( prepend(monoid.empty, inter(aGen.to(a))) ))
 }
 
 

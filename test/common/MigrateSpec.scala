@@ -26,8 +26,8 @@ class MigrateSpec extends PlaySpec {
     }
 
     "add field" in {
-//      val v3 = u1.migrateTo[UserV3]
-//      v3 must be (UserV3(name, age, mobile, ""))
+      val v3 = u1.migrateTo[UserV3]
+      v3 must be (UserV3(name, age, mobile, ""))
     }
   }
 }
