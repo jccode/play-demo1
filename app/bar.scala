@@ -16,6 +16,7 @@ object bar extends App {
   def migrate(): Unit = {
     import common.migrate._
     import scala.reflect.runtime.universe._
+    import common.cat._
 
     val u1 = User("tom", 18, Some("18138438111"))
 

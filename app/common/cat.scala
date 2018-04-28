@@ -1,6 +1,8 @@
 package common
 import cats.Monoid
-import shapeless.{::, HList, HNil, Lazy}
+import shapeless.labelled.FieldType
+import shapeless.{::, HList, HNil, Lazy, Witness}
+import shapeless.labelled.field
 
 /**
   * cats
@@ -25,4 +27,16 @@ object cat {
     (x, y) => hMonoid.value.combine(x.head, y.head) :: tMonoid.combine(x.tail, y.tail)
   }
 
+
+  implicit def labeledHlistMonoid[K <: Symbol, V , T <: HList]
+  (implicit
+   witness: Witness.Aux[K],
+   hMonoid: Lazy[Monoid[V]],
+   tMonoid: Monoid[T]
+  ): Monoid[FieldType[K, V] :: T] = createMonoid(field[K](hMonoid.value.empty) :: tMonoid.empty) {
+    (x, y) => field[K](hMonoid.value.combine(x.head, y.head)) :: tMonoid.combine(x.tail, y.tail)
+  }
+
 }
+
+
