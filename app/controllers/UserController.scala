@@ -40,19 +40,10 @@ class UserController @Inject() (cc: ControllerComponents, repo: UserRepo)(implic
   }
 
   def create() = Action.async { request =>
-//    val body: JsValue = request.body
-//    val userOpt = Json.fromJson[UserCreateForm](body).asOpt
-//    userOpt.map { userForm =>
-//      val user = (User.apply _).tupled(UserCreateForm.unapply(userForm).get)
-//      repo.insert().map {ret => Ok(ret.toString)}
-//    }.getOrElse(Future { BadRequest("Invalid arguments") })
-
-//    Future { Ok("ok") }
-
     withRequestJson[UserCreateForm](request) { userForm =>
       val user = userForm.migrateTo[User]
-      println(user)
-      Future { Ok("ok") }
+      repo.insert(user).map(id => Ok(id.toString()))
     }
   }
+
 }

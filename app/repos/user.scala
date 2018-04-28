@@ -1,12 +1,15 @@
 package repos
 
+import java.sql.Timestamp
+
 import com.google.inject.ImplementedBy
+import common.Slick._
 import dao.Tables
 import javax.inject.{Inject, Singleton}
 import models.{User, UserQuery}
+import common.migrate._
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import common.Slick._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,13 +43,9 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
     f.map(_.map(userRowToUser))
   }
 
-  private def userToUserRow(user: models.User): UserRow = {
-    UserRow(user.id, user.name, user.password, user.salt, user.mobile, user.createTime, user.updateTime)
-  }
+  private def userRowToUser(userRow: UserRow) = userRow.migrateTo[models.User]
 
-  private def userRowToUser(userRow: UserRow): models.User = {
-    models.User(userRow.name, userRow.password, userRow.salt, userRow.mobile, userRow.id, userRow.createTime, userRow.updateTime)
-  }
+  private def userToUserRow(user: models.User): UserRow = user.migrateTo[UserRow]
 
   override def close: Future[Unit] = Future.successful(db.close())
 
@@ -64,6 +63,8 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
   }
 
   override def insert(user: models.User): Future[Int] = {
-    db.run(User returning User.map(_.id) += userToUserRow(user))
+    val now = new Timestamp(System.currentTimeMillis())
+    val u = user.copy(createTime = now, updateTime = now)
+    db.run(User returning User.map(_.id) += userToUserRow(u))
   }
 }
