@@ -16,7 +16,7 @@ object LabelUtils {
 
 }
 
-object utils {
+trait CommonUtils {
 
   import play.api.libs.json.Reads
   import play.api.mvc.{AnyContent, Request, Result}

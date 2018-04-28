@@ -9,7 +9,6 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
 import common.utils._
 import common.migrate._
-import cats.instances.all._
 import repos.UserRepo
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +50,6 @@ class UserController @Inject() (cc: ControllerComponents, repo: UserRepo)(implic
 //    Future { Ok("ok") }
 
     withRequestJson[UserCreateForm](request) { userForm =>
-      implicit val timestampMonoid: Monoid[Timestamp] = createMonoid[java.sql.Timestamp](null)((x, y) => null)
       val user = userForm.migrateTo[User]
       println(user)
       Future { Ok("ok") }

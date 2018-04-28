@@ -1,16 +1,13 @@
 package common
 
+import java.sql.Timestamp
+
 import cats.Monoid
 import shapeless._
 import shapeless.labelled.{FieldType, field}
 
 
-/**
-  * Shapeless Cats Instance -- adapter
-  *
-  * @author 01372461
-  */
-trait ShapelessCatsInstance {
+trait CatsHelper {
 
   /**
     * Helper function create Monoid
@@ -20,6 +17,14 @@ trait ShapelessCatsInstance {
       override def empty: A = zero
       override def combine(x: A, y: A): A = add(x, y)
     }
+}
+
+/**
+  * Shapeless Cats Instance -- adapter
+  *
+  * @author 01372461
+  */
+trait ShapelessCatsInstance extends CatsHelper {
 
   implicit val hnilMonoid: Monoid[HNil] = createMonoid[HNil](HNil)((x, y) => HNil)
 
@@ -42,3 +47,12 @@ trait ShapelessCatsInstance {
 }
 
 object ShapelessCatsInstance extends ShapelessCatsInstance
+
+
+trait NormalCatsInstance extends CatsHelper {
+  implicit val timestampMonoid: Monoid[Timestamp] = createMonoid[java.sql.Timestamp](null)((x, y) => null)
+}
+
+object NormalCatsInstance extends NormalCatsInstance
+
+trait CatsInst extends ShapelessCatsInstance with NormalCatsInstance

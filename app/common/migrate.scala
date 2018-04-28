@@ -1,6 +1,7 @@
 package common
 
 import cats.Monoid
+import cats.instances.AllInstances
 import shapeless._
 import shapeless.ops.hlist
 
@@ -31,10 +32,7 @@ trait MigrateOps {
     (a: A) => bGen.from(align( prepend(monoid.empty, inter(aGen.to(a))) ))
 }
 
+trait Migrate extends MigrateOps
+  with CatsInst
+  with AllInstances
 
-/**
-  * object migrate for import.
-  *
-  * Be aware import "cats.instances.all._" as well.
-  */
-object migrate extends MigrateOps with ShapelessCatsInstance
