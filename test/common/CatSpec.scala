@@ -2,7 +2,7 @@ package common
 
 import cats.kernel.Monoid
 import cats.instances.all._
-import common.cat._
+import common.ShapelessCatsInstance._
 import org.scalatestplus.play.PlaySpec
 import shapeless.{HNil, ::}
 

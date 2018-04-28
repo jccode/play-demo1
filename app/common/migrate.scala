@@ -4,7 +4,11 @@ import cats.Monoid
 import shapeless._
 import shapeless.ops.hlist
 
-object migrate {
+
+/**
+  * Migrate Ops
+  */
+trait MigrateOps {
 
   trait Migration[A, B] {
     def apply(a: A): B
@@ -28,4 +32,9 @@ object migrate {
 }
 
 
-
+/**
+  * object migrate for import.
+  *
+  * Be aware import "cats.instances.all._" as well.
+  */
+object migrate extends MigrateOps with ShapelessCatsInstance

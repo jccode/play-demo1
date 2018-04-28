@@ -2,7 +2,6 @@ package common
 
 import org.scalatestplus.play.PlaySpec
 import common.migrate._
-import common.cat._
 import cats.instances.all._
 
 class MigrateSpec extends PlaySpec {
