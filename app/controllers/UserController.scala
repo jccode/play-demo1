@@ -1,5 +1,8 @@
 package controllers
 
+import java.sql.Timestamp
+
+import cats.Monoid
 import javax.inject.{Inject, Singleton}
 import models.{User, UserCreateForm, UserQuery}
 import play.api.libs.json.{JsValue, Json}
@@ -48,6 +51,7 @@ class UserController @Inject() (cc: ControllerComponents, repo: UserRepo)(implic
 //    Future { Ok("ok") }
 
     withRequestJson[UserCreateForm](request) { userForm =>
+      implicit val timestampMonoid: Monoid[Timestamp] = createMonoid[java.sql.Timestamp](null)((x, y) => null)
       val user = userForm.migrateTo[User]
       println(user)
       Future { Ok("ok") }
