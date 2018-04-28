@@ -16,12 +16,23 @@ object LabelUtils {
 
 }
 
-trait CommonUtils {
+trait PlayUtils {
 
   import play.api.libs.json.Reads
   import play.api.mvc.{AnyContent, Request, Result}
   import play.api.mvc.Results._
   import scala.concurrent.{ExecutionContext, Future}
+
+
+  def success[T](t: T)(implicit fmt: Writes[T]): Result =
+    Ok(Json.toJson(RestResult.success(t)))
+
+  def fail(msg: String)(implicit fmt: Writes[Error]): Result =
+    BadRequest(Json.toJson(RestResult.fail(msg)))
+
+  def fail(code: Int, msg: String)(implicit fmt: Writes[Error]): Result =
+    BadRequest(Json.toJson(RestResult.fail(code, msg)))
+
 
   def errorJson(error: JsError): JsObject = {
     val fields = error.errors.map { case(path, errors) =>
@@ -37,10 +48,25 @@ trait CommonUtils {
       case Some(body) =>
         Json.fromJson(body) match {
           case success: JsSuccess[A] => fn(success.value)
-          case error: JsError => Future {BadRequest(errorJson(error))}
+          case error: JsError => Future { fail(errorJson(error).toString()) }
         }
       case None =>
-        Future{BadRequest(Json.obj("error" -> "Request body was not json"))}
+        Future{ fail("Request body was not json") }
     }
   }
+
+  /**
+    * Result Opts
+    * @param value
+    * @tparam T
+    */
+  implicit class ResultOps[T](value: T) {
+
+    def success(implicit fmt: Writes[T]): Result =
+      Ok(Json.toJson(RestResult.success(value)))
+
+    def fail(implicit fmt: Writes[Error]): Result =
+      BadRequest(Json.toJson(RestResult.fail(value.toString)))
+  }
 }
+
