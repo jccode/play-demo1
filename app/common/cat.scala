@@ -30,7 +30,6 @@ object cat {
 
   implicit def labeledHlistMonoid[K <: Symbol, V , T <: HList]
   (implicit
-   witness: Witness.Aux[K],
    hMonoid: Lazy[Monoid[V]],
    tMonoid: Monoid[T]
   ): Monoid[FieldType[K, V] :: T] = createMonoid(field[K](hMonoid.value.empty) :: tMonoid.empty) {

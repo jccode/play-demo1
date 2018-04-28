@@ -3,6 +3,7 @@ package common
 import org.scalatestplus.play.PlaySpec
 import common.migrate._
 import common.cat._
+import cats.instances.all._
 
 class MigrateSpec extends PlaySpec {
 
@@ -26,9 +27,9 @@ class MigrateSpec extends PlaySpec {
       v2 must be (UserV2(age, name))
     }
 
-//    "add field" in {
-//      val v3 = u1.migrateTo[UserV3]
-//      v3 must be (UserV3(name, age, mobile, ""))
-//    }
+    "add field" in {
+      val v3 = u1.migrateTo[UserV3]
+      v3 must be (UserV3(name, age, mobile, ""))
+    }
   }
 }
