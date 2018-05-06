@@ -3,7 +3,7 @@ package controllers
 import common.migrate._
 import common.utils._
 import javax.inject.{Inject, Singleton}
-import models.{User, UserCreateForm, UserQuery, UserUpdateForm}
+import models.{User, UserCreateForm, UserQuery, UserUpdate}
 import play.api.mvc.{AbstractController, ControllerComponents}
 import repos.UserRepo
 
@@ -37,7 +37,7 @@ class UserController @Inject() (cc: ControllerComponents, repo: UserRepo)(implic
   }
 
   def update(id: Int) = Action.async { request =>
-    withRequestJson[UserUpdateForm](request) { updateForm =>
+    withRequestJson[UserUpdate](request) { updateForm =>
       print(updateForm)
       Future {success("ok")}
     }

@@ -1,6 +1,6 @@
 import java.sql.Timestamp
 
-import models.User
+import models.{User, UserUpdate}
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceApplicationLoader}
 import repos.UserRepo
 import shapeless.{HList, LabelledGeneric}
@@ -43,15 +43,22 @@ object Foo extends App {
   def injectTest(): Unit = {
     val injector = new GuiceApplicationBuilder().injector()
     val userRepo = injector.instanceOf[UserRepo]
-    val users = Await.result(userRepo.all, Duration.Inf)
-    users.foreach(println)
-    val now = new Timestamp(System.currentTimeMillis())
-    val u1 = User("tom1", "pwd1", "salt1", Some("18100001111"), 1, now, now)
-    val r = userRepo.update(u1)
-    println(r)
 
-//    val u2 = Await.result(userRepo.get(1), 1 second)
-//    println(u2)
+//    val users = Await.result(userRepo.all, Duration.Inf)
+//    users.foreach(println)
+//    val now = new Timestamp(System.currentTimeMillis())
+//    val u1 = User("tom1", "pwd1", "salt1", Some("18100001111"), 1, now, now)
+//    val r = userRepo.update(u1)
+//    println(r)
+
+    val u1 = Await.result(userRepo.get(1), 1 second)
+    println(u1)
+
+    val update1 = UserUpdate(Some("tom2"), None, Some("13600001111"))
+    val f = userRepo.patch(1, update1)
+    val r = Await.result(f, 1 second)
+
+    println(Await.result(userRepo.get(1), 1 second))
   }
 
   injectTest()

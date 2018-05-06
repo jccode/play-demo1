@@ -21,8 +21,8 @@ object UserCreateForm {
   implicit val userCreateFormat: OFormat[UserCreateForm] = Json.format[UserCreateForm]
 }
 
-case class UserUpdateForm(name: Option[String], password: Option[String], mobile: Option[String])
+case class UserUpdate(name: Option[String], password: Option[String], mobile: Option[String])
 
-object UserUpdateForm {
-  implicit val userUpdateFormFormat: OFormat[UserUpdateForm] = Json.format[UserUpdateForm]
+object UserUpdate {
+  implicit val userUpdateFormFormat: OFormat[UserUpdate] = Json.format[UserUpdate]
 }

@@ -2,6 +2,7 @@ package common
 
 import play.api.libs.json._
 
+
 /**
   * Label Utils
   */
@@ -70,3 +71,20 @@ trait PlayUtils {
   }
 }
 
+trait CommonUtils {
+
+  import shapeless.{HList, LabelledGeneric}
+  import shapeless.ops.record.ToMap
+  import shapeless.record._
+
+
+  def definedFields[T, Repr <: HList, K <: Symbol]
+  (t: T)
+  (implicit gen: LabelledGeneric.Aux[T, Repr],
+   toMap: ToMap.Aux[Repr, K, Option[Any]]): List[(String, Option[Any])] = {
+    val repr = LabelledGeneric[T].to(t)
+    val map: Map[K, Option[Any]] = repr.toMap
+    map.toList.filter(_._2.isDefined).map(x => (x._1.name, x._2))
+  }
+
+}

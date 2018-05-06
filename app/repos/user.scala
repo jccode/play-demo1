@@ -4,13 +4,15 @@ import java.sql.Timestamp
 
 import com.google.inject.ImplementedBy
 import common.Slick._
+import common.migrate._
+import common.utils._
 import dao.Tables
 import javax.inject.{Inject, Singleton}
-import models.{User, UserQuery}
-import common.migrate._
+import models.{User, UserQuery, UserUpdate}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
+import scala.collection.immutable
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -26,6 +28,8 @@ trait UserRepo {
   def insert(user: User): Future[Int]
 
   def update(user: User): Future[Int]
+
+  def patch(id: Int, user: UserUpdate): Future[Int]
 
   def close: Future[Unit]
 }
@@ -76,4 +80,11 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
     db.run(User.filter(_.id === user.id).update(userToUserRow(u)))
   }
 
+  override def patch(id: Int, user: UserUpdate): Future[Int] = {
+    val fields: immutable.Seq[(String, Option[Any])] = definedFields(user)
+    val updateFields = fields.map{ case (name, value) => s"""$name = '${value.get}'"""}.mkString(",")
+    val action = sqlu"""update #${User.baseTableRow.tableName} set #$updateFields where id = $id"""
+//    println(action.statements.head)
+    db.run(action)
+  }
 }
