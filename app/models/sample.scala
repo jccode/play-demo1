@@ -1,7 +1,6 @@
 package models
 
 import play.api.libs.json._
-import Implics._
 
 case class Address(number: Int, street: String)
 case class Person(name: String, address: Address)

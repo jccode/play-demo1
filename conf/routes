@@ -10,5 +10,6 @@ GET  /users/:id           controllers.UserController.get(id: Int)
 
 # query? create? update? delete
 POST /users               controllers.UserController.create
+PUT  /users/:id           controllers.UserController.update(id: Int)
 
 GET  /assets/*file        controllers.Assets.at(path="/public", file)

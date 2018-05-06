@@ -3,11 +3,11 @@ package controllers
 import common.migrate._
 import common.utils._
 import javax.inject.{Inject, Singleton}
-import models.{User, UserCreateForm, UserQuery}
+import models.{User, UserCreateForm, UserQuery, UserUpdateForm}
 import play.api.mvc.{AbstractController, ControllerComponents}
 import repos.UserRepo
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * UserController
@@ -36,4 +36,10 @@ class UserController @Inject() (cc: ControllerComponents, repo: UserRepo)(implic
     }
   }
 
+  def update(id: Int) = Action.async { request =>
+    withRequestJson[UserUpdateForm](request) { updateForm =>
+      print(updateForm)
+      Future {success("ok")}
+    }
+  }
 }
