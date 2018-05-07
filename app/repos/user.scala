@@ -31,6 +31,8 @@ trait UserRepo {
 
   def patch(id: Int, user: UserUpdate): Future[Int]
 
+  def delete(id: Int): Future[Int]
+
   def close: Future[Unit]
 }
 
@@ -94,5 +96,9 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
         update(u1)
       }.getOrElse(Future{0})
     }
+  }
+
+  override def delete(id: Int): Future[Int] = {
+    db.run(User.filter(_.id === id).delete)
   }
 }

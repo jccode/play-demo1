@@ -38,8 +38,11 @@ class UserController @Inject() (cc: ControllerComponents, repo: UserRepo)(implic
 
   def update(id: Int) = Action.async { request =>
     withRequestJson[UserUpdate](request) { updateForm =>
-      print(updateForm)
-      Future {success("ok")}
+      repo.patch(id, updateForm).map(success(_))
     }
+  }
+
+  def delete(id: Int) = Action.async {
+    repo.delete(id).map(_.success)
   }
 }
