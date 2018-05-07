@@ -80,11 +80,19 @@ class SlickUserRepo @Inject() (dbConfigProvider: DatabaseConfigProvider)(implici
     db.run(User.filter(_.id === user.id).update(userToUserRow(u)))
   }
 
+//  override def patch(id: Int, user: UserUpdate): Future[Int] = {
+//    val fields: immutable.Seq[(String, Option[Any])] = definedFields(user)
+//    val updateFields = fields.map{ case (name, value) => s"""$name = '${value.get}'"""}.mkString(",")
+//    val action = sqlu"""update #${User.baseTableRow.tableName} set #$updateFields where id = $id"""
+//    db.run(action)
+//  }
+
   override def patch(id: Int, user: UserUpdate): Future[Int] = {
-    val fields: immutable.Seq[(String, Option[Any])] = definedFields(user)
-    val updateFields = fields.map{ case (name, value) => s"""$name = '${value.get}'"""}.mkString(",")
-    val action = sqlu"""update #${User.baseTableRow.tableName} set #$updateFields where id = $id"""
-//    println(action.statements.head)
-    db.run(action)
+    get(id).flatMap { userOpt =>
+      userOpt.map { u0 =>
+        val u1 = u0.copy(name = user.name.getOrElse(u0.name), password = user.password.getOrElse(u0.password), mobile = user.mobile.orElse(u0.mobile))
+        update(u1)
+      }.getOrElse(Future{0})
+    }
   }
 }
